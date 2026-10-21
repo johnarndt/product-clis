@@ -1,5 +1,7 @@
 # Product CLIs
 
+Initial npm publication is pending publisher authentication. Source, documentation, tests and installable package builds are complete; see [release status](release-status.json).
+
 Small command-line clients for Postedly, MentionedOn, Intakra, Portravo, and Ocolta. Each package connects to the product's existing public API and prints JSON that works in terminal scripts and agent workflows. Node.js 22 or newer is required. There are no runtime dependencies or install scripts.
 
 | Product | npm package | Commands | Sign-in |

@@ -1,0 +1,45 @@
+{
+  "checkedAt": "2026-10-21T18:37:01.885Z",
+  "repository": "https://github.com/johnarndt/product-clis",
+  "commit": "22a69c3ea24ff3d259a8a9f8fa524337f53b303d",
+  "status": "awaiting_npm_authentication",
+  "tests": {
+    "passed": 36,
+    "failed": 0
+  },
+  "packageInstallation": "all_five_tarballs_installed_and_executable",
+  "liveSmoke": "Postedly public catalog; MentionedOn three public evidence tools; Intakra two public evidence tools; Portravo/Ocolta auth-required endpoint responses",
+  "authenticatedFulfillmentTested": false,
+  "packages": [
+    {
+      "name": "postedly-cli",
+      "version": "0.1.0",
+      "registryStatus": 404,
+      "published": false
+    },
+    {
+      "name": "mentionedon-cli",
+      "version": "0.1.0",
+      "registryStatus": 404,
+      "published": false
+    },
+    {
+      "name": "intakra-cli",
+      "version": "0.1.0",
+      "registryStatus": 404,
+      "published": false
+    },
+    {
+      "name": "portravo-cli",
+      "version": "0.1.0",
+      "registryStatus": 404,
+      "published": false
+    },
+    {
+      "name": "ocolta-cli",
+      "version": "0.1.0",
+      "registryStatus": 404,
+      "published": false
+    }
+  ]
+}
