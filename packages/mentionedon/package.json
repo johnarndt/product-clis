@@ -1,0 +1,43 @@
+{
+  "name": "mentionedon-cli",
+  "version": "0.1.0",
+  "description": "MentionedOn CLI for saved AI visibility reports, discovery evidence, and reviewed website fixes.",
+  "type": "module",
+  "bin": {
+    "mentionedon": "bin/mentionedon.mjs"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "files": [
+    "bin/",
+    "lib/",
+    "README.md",
+    "LICENSE",
+    "examples/"
+  ],
+  "keywords": [
+    "mentionedon",
+    "cli",
+    "ai-visibility",
+    "discovery",
+    "business",
+    "mcp",
+    "ai-agents"
+  ],
+  "homepage": "https://mentioned-on.com",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/johnarndt/product-clis.git",
+    "directory": "packages/mentionedon"
+  },
+  "bugs": {
+    "url": "https://github.com/johnarndt/product-clis/issues"
+  },
+  "author": "John Arndt",
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "businessName": "Example Business",
+  "websiteUrl": "https://example.com",
+  "signals": [
+    { "signal": "business_identity", "status": "present", "evidence": "Synthetic example: the supplied page uses one business name in its title and heading." },
+    { "signal": "structured_data", "status": "missing", "evidence": "Synthetic example: the supplied HTML contains no business JSON-LD." },
+    { "signal": "crawlability", "status": "unknown" }
+  ]
+}

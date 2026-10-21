@@ -1,0 +1,44 @@
+{
+  "name": "portravo-cli",
+  "version": "0.1.0",
+  "description": "Portravo CLI for construction plan uploads, project takeoffs, extraction status, and reviewed estimate exports.",
+  "type": "module",
+  "bin": {
+    "portravo": "bin/portravo.mjs"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "files": [
+    "bin/",
+    "lib/",
+    "README.md",
+    "LICENSE",
+    "examples/"
+  ],
+  "keywords": [
+    "portravo",
+    "cli",
+    "construction",
+    "takeoff",
+    "estimating",
+    "plans",
+    "api",
+    "ai-agents"
+  ],
+  "homepage": "https://portravo.com",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/johnarndt/product-clis.git",
+    "directory": "packages/portravo"
+  },
+  "bugs": {
+    "url": "https://github.com/johnarndt/product-clis/issues"
+  },
+  "author": "John Arndt",
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  }
+}

@@ -1,0 +1,1982 @@
+{
+  "retrievedAt": "2026-10-21T18:29:08.215834+00:00",
+  "endpoint": "https://mentioned-on.com/mcp",
+  "method": "tools/list",
+  "tools": [
+    {
+      "name": "analyze_discovery_readiness",
+      "title": "Analyze AI Discovery Readiness",
+      "description": "Score caller-supplied website and business discovery signals. This tool does not fetch the website, run an AI scan, persist data, or verify inclusion in any AI product.",
+      "inputSchema": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "type": "object",
+        "properties": {
+          "businessName": {
+            "type": "string",
+            "minLength": 2,
+            "maxLength": 120,
+            "description": "The business name used only to label this assessment."
+          },
+          "websiteUrl": {
+            "description": "Optional page URL used only as a label. The tool will not fetch this URL.",
+            "type": "string",
+            "maxLength": 2048,
+            "format": "uri"
+          },
+          "signals": {
+            "minItems": 1,
+            "maxItems": 10,
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "signal": {
+                  "type": "string",
+                  "enum": [
+                    "business_identity",
+                    "service_location",
+                    "page_description",
+                    "contact_details",
+                    "structured_data",
+                    "corroborating_profiles",
+                    "crawlability",
+                    "buyer_faq",
+                    "first_party_evidence",
+                    "machine_summary"
+                  ],
+                  "description": "The discovery-readiness signal being assessed."
+                },
+                "status": {
+                  "type": "string",
+                  "enum": [
+                    "present",
+                    "partial",
+                    "missing",
+                    "unknown"
+                  ],
+                  "description": "Observed status. Use unknown when the caller has no evidence."
+                },
+                "evidence": {
+                  "type": "string",
+                  "minLength": 3,
+                  "maxLength": 500,
+                  "description": "Concise caller-supplied evidence supporting the stated status."
+                }
+              },
+              "required": [
+                "signal",
+                "status"
+              ],
+              "additionalProperties": false
+            },
+            "description": "Caller-supplied signal observations. Omitted signals are treated as unknown."
+          }
+        },
+        "required": [
+          "businessName",
+          "signals"
+        ],
+        "additionalProperties": false
+      },
+      "outputSchema": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "type": "object",
+        "properties": {
+          "scope": {
+            "type": "string",
+            "const": "caller_supplied_signals_only"
+          },
+          "businessName": {
+            "type": "string"
+          },
+          "websiteUrl": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "readinessScore": {
+            "anyOf": [
+              {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 100
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "assessment": {
+            "type": "string",
+            "enum": [
+              "strong_observed",
+              "developing_observed",
+              "limited_observed",
+              "weak_observed",
+              "insufficient_evidence"
+            ]
+          },
+          "evidenceCoveragePercent": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 100
+          },
+          "evaluatedSignals": {
+            "minItems": 10,
+            "maxItems": 10,
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "signal": {
+                  "type": "string",
+                  "enum": [
+                    "business_identity",
+                    "service_location",
+                    "page_description",
+                    "contact_details",
+                    "structured_data",
+                    "corroborating_profiles",
+                    "crawlability",
+                    "buyer_faq",
+                    "first_party_evidence",
+                    "machine_summary"
+                  ]
+                },
+                "title": {
+                  "type": "string"
+                },
+                "status": {
+                  "type": "string",
+                  "enum": [
+                    "present",
+                    "partial",
+                    "missing",
+                    "unknown"
+                  ]
+                },
+                "weight": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 100
+                },
+                "evidence": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "signal",
+                "title",
+                "status",
+                "weight",
+                "evidence"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "priorities": {
+            "maxItems": 5,
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "signal": {
+                  "type": "string",
+                  "enum": [
+                    "business_identity",
+                    "service_location",
+                    "page_description",
+                    "contact_details",
+                    "structured_data",
+                    "corroborating_profiles",
+                    "crawlability",
+                    "buyer_faq",
+                    "first_party_evidence",
+                    "machine_summary"
+                  ]
+                },
+                "title": {
+                  "type": "string"
+                },
+                "status": {
+                  "type": "string",
+                  "enum": [
+                    "partial",
+                    "missing"
+                  ]
+                },
+                "impactWeight": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 100
+                },
+                "action": {
+                  "type": "string"
+                },
+                "verification": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "signal",
+                "title",
+                "status",
+                "impactWeight",
+                "action",
+                "verification"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "verificationNeeded": {
+            "maxItems": 10,
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "signal": {
+                  "type": "string",
+                  "enum": [
+                    "business_identity",
+                    "service_location",
+                    "page_description",
+                    "contact_details",
+                    "structured_data",
+                    "corroborating_profiles",
+                    "crawlability",
+                    "buyer_faq",
+                    "first_party_evidence",
+                    "machine_summary"
+                  ]
+                },
+                "title": {
+                  "type": "string"
+                },
+                "verification": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "signal",
+                "title",
+                "verification"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "limitations": {
+            "minItems": 1,
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "scope",
+          "businessName",
+          "websiteUrl",
+          "readinessScore",
+          "assessment",
+          "evidenceCoveragePercent",
+          "evaluatedSignals",
+          "priorities",
+          "verificationNeeded",
+          "limitations"
+        ],
+        "additionalProperties": false
+      },
+      "annotations": {
+        "title": "Analyze AI Discovery Readiness",
+        "readOnlyHint": true,
+        "openWorldHint": false,
+        "destructiveHint": false
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      },
+      "securitySchemes": [
+        {
+          "type": "noauth"
+        }
+      ],
+      "_meta": {
+        "securitySchemes": [
+          {
+            "type": "noauth"
+          }
+        ]
+      }
+    },
+    {
+      "name": "build_visibility_action_plan",
+      "title": "Build an AI Visibility Action Plan",
+      "description": "Prioritize fixes from caller-supplied findings using a deterministic rubric. This tool does not edit a website, contact third parties, persist data, or promise rankings or mentions.",
+      "inputSchema": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "type": "object",
+        "properties": {
+          "businessName": {
+            "type": "string",
+            "minLength": 2,
+            "maxLength": 120
+          },
+          "goal": {
+            "type": "string",
+            "enum": [
+              "improve_discovery_clarity",
+              "strengthen_citation_evidence",
+              "prepare_for_monitoring"
+            ],
+            "description": "The outcome used to break ties in the deterministic priority rubric."
+          },
+          "effortBudget": {
+            "type": "string",
+            "enum": [
+              "lean",
+              "balanced",
+              "comprehensive"
+            ],
+            "description": "Controls how many actions are returned and how they are phased."
+          },
+          "findings": {
+            "minItems": 1,
+            "maxItems": 10,
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "signal": {
+                  "type": "string",
+                  "enum": [
+                    "business_identity",
+                    "service_location",
+                    "page_description",
+                    "contact_details",
+                    "structured_data",
+                    "corroborating_profiles",
+                    "crawlability",
+                    "buyer_faq",
+                    "first_party_evidence",
+                    "machine_summary"
+                  ],
+                  "description": "The discovery-readiness signal being assessed."
+                },
+                "status": {
+                  "type": "string",
+                  "enum": [
+                    "present",
+                    "partial",
+                    "missing",
+                    "unknown"
+                  ],
+                  "description": "Observed status. Use unknown when the caller has no evidence."
+                },
+                "evidence": {
+                  "type": "string",
+                  "minLength": 3,
+                  "maxLength": 500,
+                  "description": "Concise caller-supplied evidence supporting the stated status."
+                }
+              },
+              "required": [
+                "signal",
+                "status"
+              ],
+              "additionalProperties": false
+            },
+            "description": "Caller-supplied findings. Present findings are acknowledged but do not create actions."
+          }
+        },
+        "required": [
+          "businessName",
+          "goal",
+          "effortBudget",
+          "findings"
+        ],
+        "additionalProperties": false
+      },
+      "outputSchema": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "type": "object",
+        "properties": {
+          "scope": {
+            "type": "string",
+            "const": "caller_supplied_findings_only"
+          },
+          "businessName": {
+            "type": "string"
+          },
+          "goal": {
+            "type": "string",
+            "enum": [
+              "improve_discovery_clarity",
+              "strengthen_citation_evidence",
+              "prepare_for_monitoring"
+            ]
+          },
+          "goalLabel": {
+            "type": "string"
+          },
+          "effortBudget": {
+            "type": "string",
+            "enum": [
+              "lean",
+              "balanced",
+              "comprehensive"
+            ]
+          },
+          "actions": {
+            "maxItems": 10,
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "rank": {
+                  "type": "integer",
+                  "exclusiveMinimum": 0,
+                  "maximum": 9007199254740991
+                },
+                "phase": {
+                  "type": "string",
+                  "enum": [
+                    "now",
+                    "next",
+                    "later"
+                  ]
+                },
+                "signal": {
+                  "type": "string",
+                  "enum": [
+                    "business_identity",
+                    "service_location",
+                    "page_description",
+                    "contact_details",
+                    "structured_data",
+                    "corroborating_profiles",
+                    "crawlability",
+                    "buyer_faq",
+                    "first_party_evidence",
+                    "machine_summary"
+                  ]
+                },
+                "title": {
+                  "type": "string"
+                },
+                "status": {
+                  "type": "string",
+                  "enum": [
+                    "partial",
+                    "missing",
+                    "unknown"
+                  ]
+                },
+                "effort": {
+                  "type": "string",
+                  "enum": [
+                    "low",
+                    "medium",
+                    "high"
+                  ]
+                },
+                "priorityScore": {
+                  "type": "number",
+                  "minimum": 0
+                },
+                "suppliedEvidence": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "action": {
+                  "type": "string"
+                },
+                "verification": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "rank",
+                "phase",
+                "signal",
+                "title",
+                "status",
+                "effort",
+                "priorityScore",
+                "suppliedEvidence",
+                "action",
+                "verification"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "omittedActionCount": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "excludedPresentSignals": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "business_identity",
+                "service_location",
+                "page_description",
+                "contact_details",
+                "structured_data",
+                "corroborating_profiles",
+                "crawlability",
+                "buyer_faq",
+                "first_party_evidence",
+                "machine_summary"
+              ]
+            }
+          },
+          "limitations": {
+            "minItems": 1,
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "scope",
+          "businessName",
+          "goal",
+          "goalLabel",
+          "effortBudget",
+          "actions",
+          "omittedActionCount",
+          "excludedPresentSignals",
+          "limitations"
+        ],
+        "additionalProperties": false
+      },
+      "annotations": {
+        "title": "Build an AI Visibility Action Plan",
+        "readOnlyHint": true,
+        "openWorldHint": false,
+        "destructiveHint": false
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      },
+      "securitySchemes": [
+        {
+          "type": "noauth"
+        }
+      ],
+      "_meta": {
+        "securitySchemes": [
+          {
+            "type": "noauth"
+          }
+        ]
+      }
+    },
+    {
+      "name": "summarize_scan_evidence",
+      "title": "Summarize AI Scan Evidence",
+      "description": "Calculate mention and business-citation rates from caller-supplied captures. This tool does not call AI providers, fetch URLs, persist data, or establish current inclusion beyond the supplied observations.",
+      "inputSchema": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "type": "object",
+        "properties": {
+          "businessName": {
+            "type": "string",
+            "minLength": 2,
+            "maxLength": 120
+          },
+          "observations": {
+            "minItems": 1,
+            "maxItems": 50,
+            "type": "array",
+            "items": {
+              "anyOf": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "sourceLabel": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 80,
+                      "description": "Caller-supplied label for the model, product, or source."
+                    },
+                    "surfaceType": {
+                      "type": "string",
+                      "enum": [
+                        "model_api_capture",
+                        "consumer_app_capture",
+                        "search_ai_capture",
+                        "other"
+                      ],
+                      "description": "How the caller obtained this capture."
+                    },
+                    "prompt": {
+                      "type": "string",
+                      "minLength": 3,
+                      "maxLength": 1000
+                    },
+                    "observedAt": {
+                      "type": "string",
+                      "format": "date-time",
+                      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$",
+                      "description": "ISO 8601 timestamp for the supplied capture."
+                    },
+                    "status": {
+                      "type": "string",
+                      "const": "completed"
+                    },
+                    "businessMentioned": {
+                      "type": "boolean"
+                    },
+                    "businessCitationUrls": {
+                      "default": [],
+                      "description": "URLs that the caller identified as citations specifically for the named business.",
+                      "maxItems": 10,
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "maxLength": 2048,
+                        "format": "uri"
+                      }
+                    },
+                    "position": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 100
+                    },
+                    "sentiment": {
+                      "type": "string",
+                      "enum": [
+                        "positive",
+                        "neutral",
+                        "negative",
+                        "mixed",
+                        "not_scored"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "sourceLabel",
+                    "surfaceType",
+                    "prompt",
+                    "observedAt",
+                    "status",
+                    "businessMentioned"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "sourceLabel": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 80,
+                      "description": "Caller-supplied label for the model, product, or source."
+                    },
+                    "surfaceType": {
+                      "type": "string",
+                      "enum": [
+                        "model_api_capture",
+                        "consumer_app_capture",
+                        "search_ai_capture",
+                        "other"
+                      ],
+                      "description": "How the caller obtained this capture."
+                    },
+                    "prompt": {
+                      "type": "string",
+                      "minLength": 3,
+                      "maxLength": 1000
+                    },
+                    "observedAt": {
+                      "type": "string",
+                      "format": "date-time",
+                      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$",
+                      "description": "ISO 8601 timestamp for the supplied capture."
+                    },
+                    "status": {
+                      "type": "string",
+                      "enum": [
+                        "error",
+                        "skipped"
+                      ]
+                    },
+                    "reason": {
+                      "type": "string",
+                      "minLength": 3,
+                      "maxLength": 500
+                    }
+                  },
+                  "required": [
+                    "sourceLabel",
+                    "surfaceType",
+                    "prompt",
+                    "observedAt",
+                    "status",
+                    "reason"
+                  ],
+                  "additionalProperties": false
+                }
+              ]
+            },
+            "description": "Point-in-time captures supplied by the caller. The tool will not obtain new captures."
+          }
+        },
+        "required": [
+          "businessName",
+          "observations"
+        ],
+        "additionalProperties": false
+      },
+      "outputSchema": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "type": "object",
+        "properties": {
+          "scope": {
+            "type": "string",
+            "const": "caller_supplied_captures_only"
+          },
+          "businessName": {
+            "type": "string"
+          },
+          "establishesLiveInclusion": {
+            "type": "boolean",
+            "const": false
+          },
+          "observationCount": {
+            "type": "integer",
+            "exclusiveMinimum": 0,
+            "maximum": 9007199254740991
+          },
+          "completedCount": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "unavailableCount": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "mentionCount": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "businessCitationCount": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "mentionRatePercent": {
+            "anyOf": [
+              {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 100
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "businessCitationRatePercent": {
+            "anyOf": [
+              {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 100
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "observedAtRange": {
+            "anyOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "earliest": {
+                    "type": "string"
+                  },
+                  "latest": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "earliest",
+                  "latest"
+                ],
+                "additionalProperties": false
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "uniqueBusinessCitationHosts": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "sentimentBreakdown": {
+            "type": "object",
+            "properties": {
+              "positive": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9007199254740991
+              },
+              "neutral": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9007199254740991
+              },
+              "negative": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9007199254740991
+              },
+              "mixed": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9007199254740991
+              },
+              "notScored": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9007199254740991
+              }
+            },
+            "required": [
+              "positive",
+              "neutral",
+              "negative",
+              "mixed",
+              "notScored"
+            ],
+            "additionalProperties": false
+          },
+          "bySource": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "sourceLabel": {
+                  "type": "string"
+                },
+                "completedCount": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 9007199254740991
+                },
+                "unavailableCount": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 9007199254740991
+                },
+                "mentionCount": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 9007199254740991
+                },
+                "businessCitationCount": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 9007199254740991
+                },
+                "mentionRatePercent": {
+                  "anyOf": [
+                    {
+                      "type": "number",
+                      "minimum": 0,
+                      "maximum": 100
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "businessCitationRatePercent": {
+                  "anyOf": [
+                    {
+                      "type": "number",
+                      "minimum": 0,
+                      "maximum": 100
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "sourceLabel",
+                "completedCount",
+                "unavailableCount",
+                "mentionCount",
+                "businessCitationCount",
+                "mentionRatePercent",
+                "businessCitationRatePercent"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "unavailable": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "sourceLabel": {
+                  "type": "string"
+                },
+                "surfaceType": {
+                  "type": "string",
+                  "enum": [
+                    "model_api_capture",
+                    "consumer_app_capture",
+                    "search_ai_capture",
+                    "other"
+                  ]
+                },
+                "prompt": {
+                  "type": "string"
+                },
+                "observedAt": {
+                  "type": "string"
+                },
+                "status": {
+                  "type": "string",
+                  "enum": [
+                    "error",
+                    "skipped"
+                  ]
+                },
+                "reason": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "sourceLabel",
+                "surfaceType",
+                "prompt",
+                "observedAt",
+                "status",
+                "reason"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "evidenceStatements": {
+            "minItems": 1,
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "limitations": {
+            "minItems": 1,
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "scope",
+          "businessName",
+          "establishesLiveInclusion",
+          "observationCount",
+          "completedCount",
+          "unavailableCount",
+          "mentionCount",
+          "businessCitationCount",
+          "mentionRatePercent",
+          "businessCitationRatePercent",
+          "observedAtRange",
+          "uniqueBusinessCitationHosts",
+          "sentimentBreakdown",
+          "bySource",
+          "unavailable",
+          "evidenceStatements",
+          "limitations"
+        ],
+        "additionalProperties": false
+      },
+      "annotations": {
+        "title": "Summarize AI Scan Evidence",
+        "readOnlyHint": true,
+        "openWorldHint": false,
+        "destructiveHint": false
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      },
+      "securitySchemes": [
+        {
+          "type": "noauth"
+        }
+      ],
+      "_meta": {
+        "securitySchemes": [
+          {
+            "type": "noauth"
+          }
+        ]
+      }
+    },
+    {
+      "name": "list_monitored_businesses",
+      "title": "Find your MentionedOn businesses",
+      "description": "List businesses owned by your connected MentionedOn account and their monitoring/setup status. Start here when the user asks how their business appears in AI answers. Returns a setup link for an empty account. No scan, subscription or charge is started.",
+      "inputSchema": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "type": "object",
+        "properties": {},
+        "additionalProperties": false
+      },
+      "outputSchema": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "type": "object",
+        "properties": {
+          "businesses": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "website": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "active": {
+                  "type": "boolean"
+                },
+                "onboardingStatus": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "id",
+                "name",
+                "website",
+                "active",
+                "onboardingStatus"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "setupUrl": {
+            "type": "string"
+          },
+          "nextStep": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "businesses",
+          "setupUrl",
+          "nextStep"
+        ],
+        "additionalProperties": false
+      },
+      "annotations": {
+        "title": "Find your MentionedOn businesses",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "openWorldHint": false,
+        "idempotentHint": true
+      },
+      "securitySchemes": [
+        {
+          "type": "oauth2",
+          "scopes": [
+            "brands:read"
+          ]
+        }
+      ],
+      "_meta": {
+        "securitySchemes": [
+          {
+            "type": "oauth2",
+            "scopes": [
+              "brands:read"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "get_visibility_report",
+      "title": "See visibility evidence and changes",
+      "description": "Read a business's latest saved AI capture, competitors, source links and up to 30 prior snapshots. Compare scores only when saved model, prompt and capture recipes match and both captures are complete. Reports provider gaps and timestamps. This does not query models or establish current consumer-app inclusion.",
+      "inputSchema": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "type": "object",
+        "properties": {
+          "businessId": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+            "description": "Business id returned by list_monitored_businesses."
+          },
+          "limit": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 30
+          }
+        },
+        "required": [
+          "businessId"
+        ],
+        "additionalProperties": false
+      },
+      "outputSchema": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "type": "object",
+        "properties": {
+          "business": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              },
+              "website": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "active": {
+                "type": "boolean"
+              },
+              "onboardingStatus": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              }
+            },
+            "required": [
+              "id",
+              "name",
+              "website",
+              "active",
+              "onboardingStatus"
+            ],
+            "additionalProperties": false
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "ready",
+              "awaiting_baseline"
+            ]
+          },
+          "latest": {
+            "anyOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "observedAt": {
+                    "type": "string"
+                  },
+                  "source": {
+                    "type": "string"
+                  },
+                  "score": {
+                    "type": "number"
+                  },
+                  "mentionRate": {
+                    "type": "number"
+                  },
+                  "citationRate": {
+                    "type": "number"
+                  },
+                  "status": {
+                    "type": "string"
+                  },
+                  "coverage": {
+                    "anyOf": [
+                      {
+                        "type": "object",
+                        "propertyNames": {
+                          "type": "string"
+                        },
+                        "additionalProperties": {}
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  }
+                },
+                "required": [
+                  "id",
+                  "observedAt",
+                  "source",
+                  "score",
+                  "mentionRate",
+                  "citationRate",
+                  "status",
+                  "coverage"
+                ],
+                "additionalProperties": false
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "baseline": {
+            "anyOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "observedAt": {
+                    "type": "string"
+                  },
+                  "source": {
+                    "type": "string"
+                  },
+                  "score": {
+                    "type": "number"
+                  },
+                  "mentionRate": {
+                    "type": "number"
+                  },
+                  "citationRate": {
+                    "type": "number"
+                  },
+                  "status": {
+                    "type": "string"
+                  },
+                  "coverage": {
+                    "anyOf": [
+                      {
+                        "type": "object",
+                        "propertyNames": {
+                          "type": "string"
+                        },
+                        "additionalProperties": {}
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  }
+                },
+                "required": [
+                  "id",
+                  "observedAt",
+                  "source",
+                  "score",
+                  "mentionRate",
+                  "citationRate",
+                  "status",
+                  "coverage"
+                ],
+                "additionalProperties": false
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "scoreChange": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "history": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "observedAt": {
+                  "type": "string"
+                },
+                "source": {
+                  "type": "string"
+                },
+                "score": {
+                  "type": "number"
+                },
+                "mentionRate": {
+                  "type": "number"
+                },
+                "citationRate": {
+                  "type": "number"
+                },
+                "status": {
+                  "type": "string"
+                },
+                "coverage": {
+                  "anyOf": [
+                    {
+                      "type": "object",
+                      "propertyNames": {
+                        "type": "string"
+                      },
+                      "additionalProperties": {}
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "id",
+                "observedAt",
+                "source",
+                "score",
+                "mentionRate",
+                "citationRate",
+                "status",
+                "coverage"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "byModel": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "propertyNames": {
+                "type": "string"
+              },
+              "additionalProperties": {}
+            }
+          },
+          "competitors": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "propertyNames": {
+                "type": "string"
+              },
+              "additionalProperties": {}
+            }
+          },
+          "evidence": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "propertyNames": {
+                "type": "string"
+              },
+              "additionalProperties": {}
+            }
+          },
+          "evidenceTruncated": {
+            "type": "boolean"
+          },
+          "recommendations": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "improvement": {
+            "anyOf": [
+              {
+                "type": "object",
+                "propertyNames": {
+                  "type": "string"
+                },
+                "additionalProperties": {}
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "improvementHistory": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "propertyNames": {
+                "type": "string"
+              },
+              "additionalProperties": {}
+            }
+          },
+          "reportUrl": {
+            "type": "string"
+          },
+          "limitations": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "business",
+          "status",
+          "latest",
+          "baseline",
+          "scoreChange",
+          "history",
+          "byModel",
+          "competitors",
+          "evidence",
+          "evidenceTruncated",
+          "recommendations",
+          "improvement",
+          "improvementHistory",
+          "reportUrl",
+          "limitations"
+        ],
+        "additionalProperties": false
+      },
+      "annotations": {
+        "title": "See visibility evidence and changes",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "openWorldHint": false,
+        "idempotentHint": true
+      },
+      "securitySchemes": [
+        {
+          "type": "oauth2",
+          "scopes": [
+            "brands:read"
+          ]
+        }
+      ],
+      "_meta": {
+        "securitySchemes": [
+          {
+            "type": "oauth2",
+            "scopes": [
+              "brands:read"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "get_website_fixes",
+      "title": "Read saved website fixes",
+      "description": "Read the current revision, source observations, confirmed facts, proposed schema/copy and installation checks for an owned business. No website is fetched or changed.",
+      "inputSchema": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "type": "object",
+        "properties": {
+          "businessId": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+            "description": "Business id returned by list_monitored_businesses."
+          }
+        },
+        "required": [
+          "businessId"
+        ],
+        "additionalProperties": false
+      },
+      "outputSchema": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "type": "object",
+        "properties": {
+          "businessId": {
+            "type": "string"
+          },
+          "record": {
+            "anyOf": [
+              {
+                "type": "object",
+                "propertyNames": {
+                  "type": "string"
+                },
+                "additionalProperties": {}
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "nextStep": {
+            "type": "string"
+          },
+          "limitations": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "businessId",
+          "record",
+          "nextStep",
+          "limitations"
+        ],
+        "additionalProperties": false
+      },
+      "annotations": {
+        "title": "Read saved website fixes",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "openWorldHint": false,
+        "idempotentHint": true
+      },
+      "securitySchemes": [
+        {
+          "type": "oauth2",
+          "scopes": [
+            "brands:read"
+          ]
+        }
+      ],
+      "_meta": {
+        "securitySchemes": [
+          {
+            "type": "oauth2",
+            "scopes": [
+              "brands:read"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "inspect_business_website",
+      "title": "Inspect your business website",
+      "description": "Fetch the saved business website with bounded public HTML requests and save candidate facts with source receipts. Requires a paid or trial monitoring slot and explicit authorization. Pass the exact current revision. Existing draft content is preserved: start a new inspection only before confirming facts. Does not run AI scans or publish anything.",
+      "inputSchema": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "type": "object",
+        "properties": {
+          "businessId": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+            "description": "Business id returned by list_monitored_businesses."
+          },
+          "revision": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991,
+            "description": "Exact saved revision returned by get_website_fixes; use 0 when no record exists."
+          },
+          "authorizationAcknowledged": {
+            "type": "boolean",
+            "const": true
+          }
+        },
+        "required": [
+          "businessId",
+          "revision",
+          "authorizationAcknowledged"
+        ],
+        "additionalProperties": false
+      },
+      "outputSchema": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "type": "object",
+        "properties": {
+          "businessId": {
+            "type": "string"
+          },
+          "record": {
+            "anyOf": [
+              {
+                "type": "object",
+                "propertyNames": {
+                  "type": "string"
+                },
+                "additionalProperties": {}
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "nextStep": {
+            "type": "string"
+          },
+          "limitations": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "businessId",
+          "record",
+          "nextStep",
+          "limitations"
+        ],
+        "additionalProperties": false
+      },
+      "annotations": {
+        "title": "Inspect your business website",
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "openWorldHint": true,
+        "idempotentHint": false
+      },
+      "securitySchemes": [
+        {
+          "type": "oauth2",
+          "scopes": [
+            "website:write"
+          ]
+        }
+      ],
+      "_meta": {
+        "securitySchemes": [
+          {
+            "type": "oauth2",
+            "scopes": [
+              "website:write"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "draft_website_fixes",
+      "title": "Prepare confirmed website fixes",
+      "description": "Generate and save reviewable business schema, website copy and a business-profile description from facts the user explicitly confirms. Inspect first, preserve the exact revision, and never invent missing business facts. No model spend, external publication or messages.",
+      "inputSchema": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "type": "object",
+        "properties": {
+          "businessId": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+            "description": "Business id returned by list_monitored_businesses."
+          },
+          "revision": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991,
+            "description": "Exact saved revision returned by get_website_fixes; use 0 when no record exists."
+          },
+          "facts": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "maxLength": 300
+              },
+              "description": {
+                "type": "string",
+                "maxLength": 700
+              },
+              "streetAddress": {
+                "type": "string",
+                "maxLength": 300
+              },
+              "addressLocality": {
+                "type": "string",
+                "maxLength": 300
+              },
+              "addressRegion": {
+                "type": "string",
+                "maxLength": 300
+              },
+              "postalCode": {
+                "type": "string",
+                "maxLength": 300
+              },
+              "addressCountry": {
+                "type": "string",
+                "maxLength": 300
+              },
+              "telephone": {
+                "type": "string",
+                "maxLength": 300
+              },
+              "email": {
+                "type": "string",
+                "maxLength": 300
+              },
+              "openingHours": {
+                "type": "string",
+                "maxLength": 300
+              },
+              "services": {
+                "type": "string",
+                "maxLength": 1000
+              }
+            },
+            "additionalProperties": false
+          },
+          "businessType": {
+            "type": "string",
+            "enum": [
+              "LocalBusiness",
+              "ProfessionalService",
+              "HomeAndConstructionBusiness",
+              "Plumber",
+              "Electrician",
+              "HVACBusiness",
+              "RoofingContractor",
+              "Dentist",
+              "MedicalBusiness",
+              "LegalService",
+              "RealEstateAgent",
+              "Restaurant",
+              "LodgingBusiness",
+              "Store",
+              "AutoRepair",
+              "BeautySalon"
+            ]
+          },
+          "confirmed": {
+            "type": "boolean",
+            "const": true
+          }
+        },
+        "required": [
+          "businessId",
+          "revision",
+          "facts",
+          "businessType",
+          "confirmed"
+        ],
+        "additionalProperties": false
+      },
+      "outputSchema": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "type": "object",
+        "properties": {
+          "businessId": {
+            "type": "string"
+          },
+          "record": {
+            "anyOf": [
+              {
+                "type": "object",
+                "propertyNames": {
+                  "type": "string"
+                },
+                "additionalProperties": {}
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "nextStep": {
+            "type": "string"
+          },
+          "limitations": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "businessId",
+          "record",
+          "nextStep",
+          "limitations"
+        ],
+        "additionalProperties": false
+      },
+      "annotations": {
+        "title": "Prepare confirmed website fixes",
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "openWorldHint": false,
+        "idempotentHint": false
+      },
+      "securitySchemes": [
+        {
+          "type": "oauth2",
+          "scopes": [
+            "website:write"
+          ]
+        }
+      ],
+      "_meta": {
+        "securitySchemes": [
+          {
+            "type": "oauth2",
+            "scopes": [
+              "website:write"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "verify_website_fixes",
+      "title": "Verify installed website fixes",
+      "description": "Compare saved, reviewed schema and text against a page on the same owned business website. Save dated found/not-found/unknown checks against the exact artifact revision. Requires authorization and an entitled monitoring slot. Installation checks do not prove a visibility improvement.",
+      "inputSchema": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "type": "object",
+        "properties": {
+          "businessId": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+            "description": "Business id returned by list_monitored_businesses."
+          },
+          "revision": {
+            "type": "integer",
+            "exclusiveMinimum": 0,
+            "maximum": 9007199254740991
+          },
+          "url": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 2000
+          },
+          "authorizationAcknowledged": {
+            "type": "boolean",
+            "const": true
+          }
+        },
+        "required": [
+          "businessId",
+          "revision",
+          "url",
+          "authorizationAcknowledged"
+        ],
+        "additionalProperties": false
+      },
+      "outputSchema": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "type": "object",
+        "properties": {
+          "businessId": {
+            "type": "string"
+          },
+          "record": {
+            "anyOf": [
+              {
+                "type": "object",
+                "propertyNames": {
+                  "type": "string"
+                },
+                "additionalProperties": {}
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "nextStep": {
+            "type": "string"
+          },
+          "limitations": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "businessId",
+          "record",
+          "nextStep",
+          "limitations"
+        ],
+        "additionalProperties": false
+      },
+      "annotations": {
+        "title": "Verify installed website fixes",
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "openWorldHint": true,
+        "idempotentHint": false
+      },
+      "securitySchemes": [
+        {
+          "type": "oauth2",
+          "scopes": [
+            "website:write"
+          ]
+        }
+      ],
+      "_meta": {
+        "securitySchemes": [
+          {
+            "type": "oauth2",
+            "scopes": [
+              "website:write"
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}

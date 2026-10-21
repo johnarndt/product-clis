@@ -1,0 +1,23 @@
+{
+  "businessName": "Example Business",
+  "observations": [
+    {
+      "sourceLabel": "Synthetic model API capture",
+      "surfaceType": "model_api_capture",
+      "prompt": "Synthetic test: what does Example Business offer?",
+      "observedAt": "2026-10-20T12:00:00Z",
+      "status": "completed",
+      "businessMentioned": true,
+      "businessCitationUrls": ["https://example.com"],
+      "sentiment": "not_scored"
+    },
+    {
+      "sourceLabel": "Synthetic unavailable capture",
+      "surfaceType": "model_api_capture",
+      "prompt": "Synthetic test: what does Example Business offer?",
+      "observedAt": "2026-10-20T12:00:00Z",
+      "status": "skipped",
+      "reason": "Synthetic example: no capture was supplied."
+    }
+  ]
+}

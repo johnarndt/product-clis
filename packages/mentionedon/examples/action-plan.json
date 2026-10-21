@@ -1,0 +1,10 @@
+{
+  "businessName": "Example Business",
+  "goal": "improve_discovery_clarity",
+  "effortBudget": "lean",
+  "findings": [
+    { "signal": "business_identity", "status": "present", "evidence": "Synthetic example: the supplied page consistently uses one business name." },
+    { "signal": "structured_data", "status": "missing", "evidence": "Synthetic example: the supplied HTML contains no business JSON-LD." },
+    { "signal": "crawlability", "status": "unknown" }
+  ]
+}

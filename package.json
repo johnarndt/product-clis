@@ -1,0 +1,14 @@
+{
+  "name": "product-clis",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "test": "node --test tests/*.test.mjs packages/*/*.test.mjs",
+    "pack:check": "node scripts/check-packages.mjs",
+    "install:check": "node scripts/install-smoke.mjs"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}

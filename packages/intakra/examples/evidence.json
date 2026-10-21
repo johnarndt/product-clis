@@ -1,0 +1,24 @@
+{
+  "account": { "name": "Example Logistics" },
+  "vendor": {
+    "offer": "Warehouse planning software",
+    "idealCustomerProfile": "Logistics companies opening facilities"
+  },
+  "fitCriteria": [
+    {
+      "criterion": "Operates warehouses",
+      "assessment": "match",
+      "evidence": "Synthetic example: the supplied company page describes three warehouses."
+    }
+  ],
+  "signals": [
+    {
+      "kind": "expansion",
+      "evidence": "Synthetic example: the supplied announcement describes a planned new facility.",
+      "observedAt": "2026-10-20",
+      "relevanceToOffer": "A new facility may create a warehouse-planning project.",
+      "confidence": "medium"
+    }
+  ],
+  "asOfDate": "2026-10-21"
+}

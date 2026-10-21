@@ -1,0 +1,1246 @@
+{
+  "retrievedAt": "2026-10-21T18:29:13.384929+00:00",
+  "endpoint": "https://intakra.com/mcp",
+  "method": "tools/list",
+  "tools": [
+    {
+      "name": "score_buying_signal_evidence",
+      "title": "Score caller-supplied buying-signal evidence",
+      "description": "Deterministically score caller-supplied business-account fit and buying-signal evidence. Returns a review-only scorecard, evidence gaps, and unsupported-claim flags. The tool does not fetch sources, access Intakra workspaces, store input, spend money, draft outreach, or send anything.",
+      "inputSchema": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "account",
+          "vendor",
+          "fitCriteria",
+          "signals"
+        ],
+        "properties": {
+          "account": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "name"
+            ],
+            "properties": {
+              "name": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 200,
+                "description": "Business account name supplied by the caller. Do not include personal or confidential data."
+              }
+            }
+          },
+          "vendor": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "offer",
+              "idealCustomerProfile"
+            ],
+            "properties": {
+              "offer": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 1000,
+                "description": "Plain-language description of the vendor offer being evaluated."
+              },
+              "idealCustomerProfile": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 1000,
+                "description": "Plain-language ideal-customer profile supplied by the caller."
+              }
+            }
+          },
+          "fitCriteria": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 8,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "criterion",
+                "assessment",
+                "evidence"
+              ],
+              "properties": {
+                "criterion": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 240
+                },
+                "assessment": {
+                  "type": "string",
+                  "enum": [
+                    "match",
+                    "mismatch",
+                    "unknown"
+                  ]
+                },
+                "evidence": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 600,
+                  "description": "Caller-supplied fact supporting the fit assessment."
+                },
+                "sourceUrl": {
+                  "type": "string",
+                  "maxLength": 2048,
+                  "description": "Optional credential-free HTTPS source. Intakra does not open or verify it."
+                }
+              }
+            }
+          },
+          "signals": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 10,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "kind",
+                "evidence",
+                "relevanceToOffer",
+                "confidence"
+              ],
+              "properties": {
+                "kind": {
+                  "type": "string",
+                  "enum": [
+                    "leadership_change",
+                    "hiring",
+                    "funding",
+                    "product_launch",
+                    "expansion",
+                    "technology_change",
+                    "partnership",
+                    "regulatory_event",
+                    "other"
+                  ]
+                },
+                "evidence": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 600,
+                  "description": "A concrete business event or observation supplied by the caller."
+                },
+                "observedAt": {
+                  "type": "string",
+                  "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+                  "description": "Optional event date. Missing or stale dates reduce confidence."
+                },
+                "sourceUrl": {
+                  "type": "string",
+                  "maxLength": 2048,
+                  "description": "Optional credential-free HTTPS source. Intakra does not open or verify it."
+                },
+                "relevanceToOffer": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 600,
+                  "description": "The caller's specific, hedged explanation of why the event may matter for this offer."
+                },
+                "confidence": {
+                  "type": "string",
+                  "enum": [
+                    "high",
+                    "medium",
+                    "low"
+                  ],
+                  "description": "The caller's confidence in the observation, not Intakra verification."
+                }
+              }
+            }
+          },
+          "asOfDate": {
+            "type": "string",
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+            "description": "Optional date for reproducible recency scoring. Defaults to the current California date."
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "status",
+          "requiresHumanReview",
+          "accountName",
+          "asOfDate",
+          "disposition",
+          "scores",
+          "fit",
+          "evidence",
+          "admissibleSignalCount",
+          "evidenceGaps",
+          "unsupportedClaims",
+          "nextAction",
+          "boundaries"
+        ],
+        "properties": {
+          "status": {
+            "type": "string",
+            "const": "draft"
+          },
+          "requiresHumanReview": {
+            "type": "boolean",
+            "const": true
+          },
+          "accountName": {
+            "type": "string"
+          },
+          "asOfDate": {
+            "type": "string"
+          },
+          "disposition": {
+            "type": "string",
+            "enum": [
+              "review_now",
+              "verify",
+              "deprioritize"
+            ]
+          },
+          "scores": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "fit",
+              "timing",
+              "evidenceQuality",
+              "priority"
+            ],
+            "properties": {
+              "fit": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 100
+              },
+              "timing": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 100
+              },
+              "evidenceQuality": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 100
+              },
+              "priority": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 100
+              }
+            }
+          },
+          "fit": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "matches",
+              "mismatches",
+              "unknowns",
+              "summary"
+            ],
+            "properties": {
+              "matches": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "mismatches": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "unknowns": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "summary": {
+                "type": "string"
+              }
+            }
+          },
+          "evidence": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "signalNumber",
+                "status",
+                "contribution",
+                "flags"
+              ],
+              "properties": {
+                "signalNumber": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "status": {
+                  "type": "string",
+                  "enum": [
+                    "admissible",
+                    "needs_verification",
+                    "excluded"
+                  ]
+                },
+                "contribution": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 1
+                },
+                "flags": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "admissibleSignalCount": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "evidenceGaps": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "unsupportedClaims": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "nextAction": {
+            "type": "string"
+          },
+          "boundaries": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "callerSuppliedOnly",
+              "sourceVerificationPerformed",
+              "networkAccess",
+              "dataPersisted",
+              "outreachDrafted",
+              "messageSent"
+            ],
+            "properties": {
+              "callerSuppliedOnly": {
+                "type": "boolean",
+                "const": true
+              },
+              "sourceVerificationPerformed": {
+                "type": "boolean",
+                "const": false
+              },
+              "networkAccess": {
+                "type": "boolean",
+                "const": false
+              },
+              "dataPersisted": {
+                "type": "boolean",
+                "const": false
+              },
+              "outreachDrafted": {
+                "type": "boolean",
+                "const": false
+              },
+              "messageSent": {
+                "type": "boolean",
+                "const": false
+              }
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "openWorldHint": false,
+        "title": "Score caller-supplied buying-signal evidence"
+      },
+      "securitySchemes": [
+        {
+          "type": "noauth"
+        }
+      ],
+      "_meta": {
+        "securitySchemes": [
+          {
+            "type": "noauth"
+          }
+        ],
+        "openai/toolInvocation/invoking": "Scoring supplied evidence...",
+        "openai/toolInvocation/invoked": "Evidence scorecard ready for review"
+      }
+    },
+    {
+      "name": "prepare_why_now_review",
+      "title": "Prepare an evidence-labeled why-now review",
+      "description": "Turn caller-supplied fit criteria and business signals into reviewable why-now and fit guidance. Every fact remains labeled caller-supplied and unverified. The tool does not research, infer budget or buyer intent as fact, draft outreach, access private data, persist input, or take action.",
+      "inputSchema": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "account",
+          "vendor",
+          "fitCriteria",
+          "signals"
+        ],
+        "properties": {
+          "account": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "name"
+            ],
+            "properties": {
+              "name": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 200,
+                "description": "Business account name supplied by the caller. Do not include personal or confidential data."
+              }
+            }
+          },
+          "vendor": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "offer",
+              "idealCustomerProfile"
+            ],
+            "properties": {
+              "offer": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 1000,
+                "description": "Plain-language description of the vendor offer being evaluated."
+              },
+              "idealCustomerProfile": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 1000,
+                "description": "Plain-language ideal-customer profile supplied by the caller."
+              }
+            }
+          },
+          "fitCriteria": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 8,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "criterion",
+                "assessment",
+                "evidence"
+              ],
+              "properties": {
+                "criterion": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 240
+                },
+                "assessment": {
+                  "type": "string",
+                  "enum": [
+                    "match",
+                    "mismatch",
+                    "unknown"
+                  ]
+                },
+                "evidence": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 600,
+                  "description": "Caller-supplied fact supporting the fit assessment."
+                },
+                "sourceUrl": {
+                  "type": "string",
+                  "maxLength": 2048,
+                  "description": "Optional credential-free HTTPS source. Intakra does not open or verify it."
+                }
+              }
+            }
+          },
+          "signals": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 10,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "kind",
+                "evidence",
+                "relevanceToOffer",
+                "confidence"
+              ],
+              "properties": {
+                "kind": {
+                  "type": "string",
+                  "enum": [
+                    "leadership_change",
+                    "hiring",
+                    "funding",
+                    "product_launch",
+                    "expansion",
+                    "technology_change",
+                    "partnership",
+                    "regulatory_event",
+                    "other"
+                  ]
+                },
+                "evidence": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 600,
+                  "description": "A concrete business event or observation supplied by the caller."
+                },
+                "observedAt": {
+                  "type": "string",
+                  "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+                  "description": "Optional event date. Missing or stale dates reduce confidence."
+                },
+                "sourceUrl": {
+                  "type": "string",
+                  "maxLength": 2048,
+                  "description": "Optional credential-free HTTPS source. Intakra does not open or verify it."
+                },
+                "relevanceToOffer": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 600,
+                  "description": "The caller's specific, hedged explanation of why the event may matter for this offer."
+                },
+                "confidence": {
+                  "type": "string",
+                  "enum": [
+                    "high",
+                    "medium",
+                    "low"
+                  ],
+                  "description": "The caller's confidence in the observation, not Intakra verification."
+                }
+              }
+            }
+          },
+          "asOfDate": {
+            "type": "string",
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+            "description": "Optional date for reproducible recency scoring. Defaults to the current California date."
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "status",
+          "requiresHumanReview",
+          "accountName",
+          "headline",
+          "disposition",
+          "whyNow",
+          "fitGuidance",
+          "supportedFacts",
+          "evidenceGaps",
+          "questionsForReviewer",
+          "prohibitedActions",
+          "sourceVerificationPerformed"
+        ],
+        "properties": {
+          "status": {
+            "type": "string",
+            "const": "draft"
+          },
+          "requiresHumanReview": {
+            "type": "boolean",
+            "const": true
+          },
+          "accountName": {
+            "type": "string"
+          },
+          "headline": {
+            "type": "string"
+          },
+          "disposition": {
+            "type": "string",
+            "enum": [
+              "review_now",
+              "verify",
+              "deprioritize"
+            ]
+          },
+          "whyNow": {
+            "type": "string"
+          },
+          "fitGuidance": {
+            "type": "string"
+          },
+          "supportedFacts": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "signalNumber",
+                "claim",
+                "sourceUrl",
+                "observedAt",
+                "verificationStatus"
+              ],
+              "properties": {
+                "signalNumber": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "claim": {
+                  "type": "string"
+                },
+                "sourceUrl": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "observedAt": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "verificationStatus": {
+                  "type": "string",
+                  "const": "caller_supplied_unverified"
+                }
+              }
+            }
+          },
+          "evidenceGaps": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "questionsForReviewer": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "prohibitedActions": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "sourceVerificationPerformed": {
+            "type": "boolean",
+            "const": false
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "openWorldHint": false,
+        "title": "Prepare an evidence-labeled why-now review"
+      },
+      "securitySchemes": [
+        {
+          "type": "noauth"
+        }
+      ],
+      "_meta": {
+        "securitySchemes": [
+          {
+            "type": "noauth"
+          }
+        ],
+        "openai/toolInvocation/invoking": "Preparing a why-now review...",
+        "openai/toolInvocation/invoked": "Why-now review ready"
+      }
+    },
+    {
+      "name": "list_accounts",
+      "title": "List tracked accounts",
+      "description": "Use for 'here is my account list' or 'which companies am I tracking?'. List accounts in your connected Intakra workspace, or match supplied domains against that list. Returns missing domains, recorded check dates and pagination. This reads saved records and does not add accounts or run a new check.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "domains": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "minItems": 1,
+            "maxItems": 200,
+            "description": "Optional company domains to check against your tracked list, up to 200. Omit to use your tracked accounts."
+          },
+          "limit": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 100,
+            "description": "Accounts per page, default 50."
+          },
+          "offset": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 10000,
+            "description": "Start at this offset, default 0. Follow next_offset for remaining accounts."
+          }
+        },
+        "additionalProperties": false
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      },
+      "securitySchemes": [
+        {
+          "type": "oauth2",
+          "scopes": [
+            "accounts:read"
+          ]
+        }
+      ],
+      "_meta": {
+        "securitySchemes": [
+          {
+            "type": "oauth2",
+            "scopes": [
+              "accounts:read"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "prioritize_accounts",
+      "title": "Choose accounts worth a look",
+      "description": "Use for 'who should I target from my account list?' or 'are these companies showing buying signals?'. Rank your tracked accounts by their saved open opportunities relevant to your offering (and by Intakra's account score for fit, timing and reach, 0 to 100, when it is on for your workspace), with dated proof, links and a rough time frame. Optional domains restrict the list. Returns missing accounts and accounts without eligible saved signals. Public events can suggest a reason to investigate; they do not confirm need, budget or purchase intent. This does not run fresh research or contact anyone.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "domains": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "minItems": 1,
+            "maxItems": 200,
+            "description": "Optional company domains to check against your tracked list, up to 200. Omit to use your tracked accounts."
+          },
+          "limit": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 100,
+            "description": "Ranked accounts to return, default 20."
+          }
+        },
+        "additionalProperties": false
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      },
+      "securitySchemes": [
+        {
+          "type": "oauth2",
+          "scopes": [
+            "accounts:read"
+          ]
+        }
+      ],
+      "_meta": {
+        "securitySchemes": [
+          {
+            "type": "oauth2",
+            "scopes": [
+              "accounts:read"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "get_account_changes",
+      "title": "Review changes on your account list",
+      "description": "Use for 'anything happening on my account list?' or 'what changed at these companies this week?'. Return newly recorded findings for your tracked accounts since a chosen date, with the public event date, the date Intakra recorded it and source links. Defaults to the last seven days. Optional domains restrict the list. Saved findings may describe older events discovered recently. No findings is not proof of no activity. This reads saved records without running new research.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "domains": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "minItems": 1,
+            "maxItems": 200,
+            "description": "Optional company domains to check against your tracked list, up to 200. Omit to use your tracked accounts."
+          },
+          "since": {
+            "type": "string",
+            "description": "Start date YYYY-MM-DD or ISO 8601 timestamp with timezone, not in the future. Default: seven days ago."
+          },
+          "limit": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "description": "Findings to return, default 50. Narrow since or domains if truncated."
+          }
+        },
+        "additionalProperties": false
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      },
+      "securitySchemes": [
+        {
+          "type": "oauth2",
+          "scopes": [
+            "accounts:read"
+          ]
+        }
+      ],
+      "_meta": {
+        "securitySchemes": [
+          {
+            "type": "oauth2",
+            "scopes": [
+              "accounts:read"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "list_opportunities",
+      "title": "List leads",
+      "description": "List the current leads: companies on your list that started something you could help with. Each one has what we found (with dates and links), what it usually means for someone selling what you sell, and a rough time frame. Use filter \"closing_soon\" for the ones that usually wind down within 30 days.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "filter": {
+            "type": "string",
+            "enum": [
+              "open",
+              "closing_soon"
+            ],
+            "description": "open (default) or closing_soon"
+          },
+          "limit": {
+            "type": "number",
+            "description": "How many to return (default 20, max 100)"
+          }
+        },
+        "additionalProperties": false
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      },
+      "securitySchemes": [
+        {
+          "type": "oauth2",
+          "scopes": [
+            "accounts:read"
+          ]
+        }
+      ],
+      "_meta": {
+        "securitySchemes": [
+          {
+            "type": "oauth2",
+            "scopes": [
+              "accounts:read"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "get_account",
+      "title": "Look up an account",
+      "description": "Read saved context for one company on your tracked list: up to 12 recent findings from public sources (with dates and available links), and current open leads with dated proof. Pass a domain (acme.com), a company name, or an account id. This does not run a new check.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "account": {
+            "type": "string",
+            "description": "Domain, company name, or account id"
+          }
+        },
+        "required": [
+          "account"
+        ],
+        "additionalProperties": false
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      },
+      "securitySchemes": [
+        {
+          "type": "oauth2",
+          "scopes": [
+            "accounts:read"
+          ]
+        }
+      ],
+      "_meta": {
+        "securitySchemes": [
+          {
+            "type": "oauth2",
+            "scopes": [
+              "accounts:read"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "get_project_updates",
+      "title": "Read project changes",
+      "description": "Read this workspace's watch status and the latest 20 material changes, with before/after claims and dated sources. Saved evidence only; no new research or notification.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "opportunity_id": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "opportunity_id"
+        ],
+        "additionalProperties": false
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      },
+      "securitySchemes": [
+        {
+          "type": "oauth2",
+          "scopes": [
+            "accounts:read"
+          ]
+        }
+      ],
+      "_meta": {
+        "securitySchemes": [
+          {
+            "type": "oauth2",
+            "scopes": [
+              "accounts:read"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "add_accounts",
+      "title": "Add accounts",
+      "description": "Add companies to your list by website domain (for example [\"acme.com\", \"globex.com\"]). We start checking their public records on the next daily pass. Domains already on your list are skipped, and your plan's account limit applies.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "domains": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "minItems": 1,
+            "maxItems": 200,
+            "description": "Up to 200 company domains"
+          }
+        },
+        "required": [
+          "domains"
+        ],
+        "additionalProperties": false
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      },
+      "securitySchemes": [
+        {
+          "type": "oauth2",
+          "scopes": [
+            "accounts:write"
+          ]
+        }
+      ],
+      "_meta": {
+        "securitySchemes": [
+          {
+            "type": "oauth2",
+            "scopes": [
+              "accounts:write"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "set_offering",
+      "title": "Say what you sell",
+      "description": "Tell Intakra what you sell, in a sentence or two (for example \"Payroll software for restaurant groups with 5 to 50 locations\"). We use it to decide which findings are worth your time. It replaces the current description.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "offering": {
+            "type": "string",
+            "description": "What you sell, 10 to 600 characters"
+          }
+        },
+        "required": [
+          "offering"
+        ],
+        "additionalProperties": false
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": true,
+        "idempotentHint": true,
+        "openWorldHint": false
+      },
+      "securitySchemes": [
+        {
+          "type": "oauth2",
+          "scopes": [
+            "offering:write"
+          ]
+        }
+      ],
+      "_meta": {
+        "securitySchemes": [
+          {
+            "type": "oauth2",
+            "scopes": [
+              "offering:write"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "get_daily_brief",
+      "title": "Today's note",
+      "description": "Use for 'what should I look at today?' or 'who is worth a call?'. Returns the accounts in today's note: what we found (dated, with links), what it usually means for what you sell, who to reach and why, and roughly how much time there is. If no note went out yet today, returns what the next one would hold. Quiet days return nothing; that is normal. Saved records only, no new research.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {},
+        "additionalProperties": false
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      },
+      "securitySchemes": [
+        {
+          "type": "oauth2",
+          "scopes": [
+            "accounts:read"
+          ]
+        }
+      ],
+      "_meta": {
+        "securitySchemes": [
+          {
+            "type": "oauth2",
+            "scopes": [
+              "accounts:read"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "get_best_contact",
+      "title": "Who to reach for a lead",
+      "description": "The person who most likely owns the project behind one lead, and why: name, role, LinkedIn, and a verified work email when we have one (never for EU, EEA or UK companies). Sometimes only a LinkedIn search for the right title. Who and why only: Intakra never writes or sends messages.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "opportunity_id": {
+            "type": "string",
+            "description": "The lead id from list_opportunities or get_daily_brief (starts with eop_, or rh_ for a match of your own rule)"
+          }
+        },
+        "required": [
+          "opportunity_id"
+        ],
+        "additionalProperties": false
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      },
+      "securitySchemes": [
+        {
+          "type": "oauth2",
+          "scopes": [
+            "accounts:read"
+          ]
+        }
+      ],
+      "_meta": {
+        "securitySchemes": [
+          {
+            "type": "oauth2",
+            "scopes": [
+              "accounts:read"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "list_suggestions",
+      "title": "Suggested accounts",
+      "description": "Accounts Intakra suggested for your list (from public filings, news, and lookalikes of your customers), with the reason for each. Suggestions do not count toward your plan until you approve them in Intakra.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "state": {
+            "type": "string",
+            "enum": [
+              "pending",
+              "approved",
+              "rejected"
+            ],
+            "description": "Default pending."
+          },
+          "limit": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 100,
+            "description": "Default 25."
+          }
+        },
+        "additionalProperties": false
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      },
+      "securitySchemes": [
+        {
+          "type": "oauth2",
+          "scopes": [
+            "accounts:read"
+          ]
+        }
+      ],
+      "_meta": {
+        "securitySchemes": [
+          {
+            "type": "oauth2",
+            "scopes": [
+              "accounts:read"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "request_accounts",
+      "title": "Find accounts for me",
+      "description": "Ask Intakra to find companies that fit, from a short description, an industry, a size range, a country, or up to 5 of your customers' domains. Suggestions show up in Intakra (and list_suggestions) and never count toward your plan until approved. Ask the user before calling. Runs in the background; a few requests a day at most.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "description": {
+            "type": "string",
+            "description": "For example \"logistics software companies in Texas\""
+          },
+          "industry": {
+            "type": "string"
+          },
+          "country": {
+            "type": "string",
+            "description": "Two letter country code, for example US"
+          },
+          "region": {
+            "type": "string",
+            "description": "US state or region code"
+          },
+          "employee_min": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "employee_max": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "lookalike_domains": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 5,
+            "description": "Up to 5 customer domains to find lookalikes of"
+          }
+        },
+        "additionalProperties": false
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": true
+      },
+      "securitySchemes": [
+        {
+          "type": "oauth2",
+          "scopes": [
+            "accounts:write"
+          ]
+        }
+      ],
+      "_meta": {
+        "securitySchemes": [
+          {
+            "type": "oauth2",
+            "scopes": [
+              "accounts:write"
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}

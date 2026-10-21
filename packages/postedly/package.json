@@ -1,0 +1,44 @@
+{
+  "name": "postedly-cli",
+  "version": "0.1.0",
+  "description": "Prepare physical mail, fax and handwritten cards; obtain a private review link and track delivery from the terminal.",
+  "type": "module",
+  "bin": {
+    "postedly": "bin/postedly.mjs"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "files": [
+    "bin/",
+    "lib/",
+    "README.md",
+    "LICENSE",
+    "examples/"
+  ],
+  "keywords": [
+    "postedly",
+    "cli",
+    "mail",
+    "fax",
+    "postcards",
+    "certified-mail",
+    "handwritten-cards",
+    "ai-agents"
+  ],
+  "homepage": "https://postedly.com/developers",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/johnarndt/product-clis.git",
+    "directory": "packages/postedly"
+  },
+  "bugs": {
+    "url": "https://github.com/johnarndt/product-clis/issues"
+  },
+  "author": "John Arndt",
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  }
+}

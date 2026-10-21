@@ -1,0 +1,43 @@
+{
+  "name": "intakra-cli",
+  "version": "0.1.0",
+  "description": "Intakra CLI for tracked companies, dated buying evidence, saved leads, and workspace actions.",
+  "type": "module",
+  "bin": {
+    "intakra": "bin/intakra.mjs"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "files": [
+    "bin/",
+    "lib/",
+    "README.md",
+    "LICENSE",
+    "examples/"
+  ],
+  "keywords": [
+    "intakra",
+    "cli",
+    "sales",
+    "accounts",
+    "buying-signals",
+    "mcp",
+    "ai-agents"
+  ],
+  "homepage": "https://intakra.com",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/johnarndt/product-clis.git",
+    "directory": "packages/intakra"
+  },
+  "bugs": {
+    "url": "https://github.com/johnarndt/product-clis/issues"
+  },
+  "author": "John Arndt",
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  }
+}
