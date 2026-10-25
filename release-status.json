@@ -1,45 +1,102 @@
 {
-  "checkedAt": "2026-10-21T18:37:01.885Z",
+  "checkedAt": "2026-10-25T19:47:07.634Z",
   "repository": "https://github.com/johnarndt/product-clis",
-  "commit": "22a69c3ea24ff3d259a8a9f8fa524337f53b303d",
-  "status": "awaiting_npm_authentication",
+  "releaseSourceCommit": "69c4c71f1e26953a02e6cf87c633e929ecd82424",
+  "status": "selected_packages_published_and_integrity_verified",
+  "selectedProducts": [
+    "postedly",
+    "mentionedon",
+    "intakra",
+    "portravo"
+  ],
   "tests": {
     "passed": 36,
     "failed": 0
   },
-  "packageInstallation": "all_five_tarballs_installed_and_executable",
-  "liveSmoke": "Postedly public catalog; MentionedOn three public evidence tools; Intakra two public evidence tools; Portravo/Ocolta auth-required endpoint responses",
-  "authenticatedFulfillmentTested": false,
+  "verification": "Public exact-version metadata and downloaded tarballs match the prepared SHA-512 and SHA-256 values. Each successful upload occurred once; processing delays were verified without resubmission.",
   "packages": [
     {
       "name": "postedly-cli",
       "version": "0.1.0",
-      "registryStatus": 404,
-      "published": false
+      "integrity": "sha512-fCVj6pszCA3Y+aeQ8bTI/MIUwtoM01ugKjBrTahh9jqjO6n1CHidww0lIh9Ar7fOmmEKVZ48CL3sYhOWYHiGfw==",
+      "url": "https://www.npmjs.com/package/postedly-cli",
+      "verified": true,
+      "published": true
     },
     {
       "name": "mentionedon-cli",
       "version": "0.1.0",
-      "registryStatus": 404,
-      "published": false
+      "integrity": "sha512-O5FphmWsWzmeDIC3E2z1oRQP+6dzlyD80A3XfBvCflCntEKvz2X2RdHPbL+ob3MWKK47aML+RQYvxVuBggBwgw==",
+      "url": "https://www.npmjs.com/package/mentionedon-cli",
+      "verified": true,
+      "published": true
     },
     {
       "name": "intakra-cli",
       "version": "0.1.0",
-      "registryStatus": 404,
-      "published": false
+      "integrity": "sha512-5+8/4EK8QRGb+wnz2ttAgl8VGc4oken2j3xySNn0pYMCDDnONqKLMw4rphbipsPjgFn27OpyR1jnkAVTFM/gRw==",
+      "url": "https://www.npmjs.com/package/intakra-cli",
+      "verified": true,
+      "published": true
     },
     {
       "name": "portravo-cli",
       "version": "0.1.0",
-      "registryStatus": 404,
-      "published": false
-    },
-    {
-      "name": "ocolta-cli",
-      "version": "0.1.0",
-      "registryStatus": 404,
-      "published": false
+      "integrity": "sha512-y7uM+FyZtbjJ01RHd4NzynDxik8o1FBZ8pXmQpFAczs/hIwwbq4OoEQukUgiN7AJl//87PA1vyoxAJ8lJtQNIA==",
+      "url": "https://www.npmjs.com/package/portravo-cli",
+      "verified": true,
+      "published": true
     }
-  ]
+  ],
+  "excludedProducts": [
+    {
+      "product": "ocolta",
+      "status": "Not selected or published in this release."
+    }
+  ],
+  "previousPreparation": {
+    "checkedAt": "2026-10-21T18:37:01.885Z",
+    "repository": "https://github.com/johnarndt/product-clis",
+    "commit": "22a69c3ea24ff3d259a8a9f8fa524337f53b303d",
+    "status": "awaiting_npm_authentication",
+    "tests": {
+      "passed": 36,
+      "failed": 0
+    },
+    "packageInstallation": "all_five_tarballs_installed_and_executable",
+    "liveSmoke": "Postedly public catalog; MentionedOn three public evidence tools; Intakra two public evidence tools; Portravo/Ocolta auth-required endpoint responses",
+    "authenticatedFulfillmentTested": false,
+    "packages": [
+      {
+        "name": "postedly-cli",
+        "version": "0.1.0",
+        "registryStatus": 404,
+        "published": false
+      },
+      {
+        "name": "mentionedon-cli",
+        "version": "0.1.0",
+        "registryStatus": 404,
+        "published": false
+      },
+      {
+        "name": "intakra-cli",
+        "version": "0.1.0",
+        "registryStatus": 404,
+        "published": false
+      },
+      {
+        "name": "portravo-cli",
+        "version": "0.1.0",
+        "registryStatus": 404,
+        "published": false
+      },
+      {
+        "name": "ocolta-cli",
+        "version": "0.1.0",
+        "registryStatus": 404,
+        "published": false
+      }
+    ]
+  }
 }
