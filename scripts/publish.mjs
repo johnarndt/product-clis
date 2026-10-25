@@ -1,10 +1,25 @@
 import { spawnSync, execFileSync } from 'node:child_process';
 import { mkdtemp, readFile, writeFile, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
-import { join, resolve } from 'node:path';
+import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 const root = fileURLToPath(new URL('../', import.meta.url));
-const products = ['postedly', 'mentionedon', 'intakra', 'portravo', 'ocolta'];
+const availableProducts = ['postedly', 'mentionedon', 'intakra', 'portravo', 'ocolta'];
+const args = process.argv.slice(2);
+const usage = 'Usage: node scripts/publish.mjs --products postedly,mentionedon,intakra,portravo\nChoose the products explicitly; no packages are published by default.';
+if (args.length === 1 && ['--help', '-h'].includes(args[0])) {
+  console.log(usage);
+  process.exit(0);
+}
+if (args.length !== 2 || args[0] !== '--products' || !args[1]) {
+  console.error(usage);
+  process.exit(1);
+}
+const products = args[1].split(',');
+if (new Set(products).size !== products.length || products.some(id => !availableProducts.includes(id))) {
+  console.error(`Choose unique product names from: ${availableProducts.join(', ')}.`);
+  process.exit(1);
+}
 const registry = 'https://registry.npmjs.org';
 function run(cmd, args, cwd = root) {
   const result = spawnSync(cmd, args, { cwd, stdio: 'inherit' });
@@ -16,7 +31,7 @@ async function metadata(name, version) {
   if (!response.ok) throw new Error(`Registry returned HTTP ${response.status} for ${name}.`);
   return response.json();
 }
-const release = { checkedAt: new Date().toISOString(), packages: [] };
+const release = { checkedAt: new Date().toISOString(), selectedProducts: products, packages: [] };
 let temporary;
 try {
   run('npm', ['run', 'build']);
