@@ -41,7 +41,7 @@ Tests exercise request contracts, OAuth and credential handling using local fixt
 After review and successful checks, sign in with `npm login` and run the release script:
 
 ```sh
-node scripts/publish.mjs
+node scripts/publish.mjs --products postedly,mentionedon,intakra,portravo
 ```
 
-It publishes only a missing package version and verifies the resulting version and integrity against its tarball. Existing versions are never overwritten. npm requires suitable account authentication; the five packages remain independent. External package directories may discover npm metadata on their own schedule; publication does not guarantee indexing or search ranking.
+Choose the products explicitly for each release. The script refuses to run without `--products`; the example above releases only the four named packages. It publishes only a missing package version and verifies the resulting version and integrity against its tarball. Existing versions are never overwritten. npm requires suitable account authentication; the five packages remain independent. External package directories may discover npm metadata on their own schedule; publication does not guarantee indexing or search ranking.
