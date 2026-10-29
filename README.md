@@ -1,12 +1,12 @@
 # Product CLIs
 
-Initial npm publication is pending publisher authentication. Source, documentation, tests and installable package builds are complete; see [release status](release-status.json).
+Postedly CLI **0.2.0** is published on npm, with masked checking-account discovery and check drafting that returns a private browser review link. The public package, installed version and live catalog were verified; see [release status](release-status.json) for this release and the unchanged other packages.
 
 Small command-line clients for Postedly, MentionedOn, Intakra, Portravo, and Ocolta. Each package connects to the product's existing public API and prints JSON that works in terminal scripts and agent workflows. Node.js 22 or newer is required. There are no runtime dependencies or install scripts.
 
 | Product | npm package | Commands | Sign-in |
 | --- | --- | --- | --- |
-| [Postedly](https://postedly.com) | [`postedly-cli`](packages/postedly) | Quotes, private checkout review, mail/fax delivery, contacts and drafts | Browser OAuth with PKCE |
+| [Postedly](https://postedly.com) | [`postedly-cli@0.2.0`](https://www.npmjs.com/package/postedly-cli/v/0.2.0) | Masked check accounts and check drafts; correspondence quotes, browser review and tracking; contacts and saved drafts | Browser OAuth with PKCE |
 | [MentionedOn](https://mentioned-on.com) | [`mentionedon-cli`](packages/mentionedon) | AI visibility reports, supplied evidence, website inspection and saved fixes | Browser OAuth with PKCE |
 | [Intakra](https://intakra.com) | [`intakra-cli`](packages/intakra) | Accounts, buying evidence, leads and workspace actions | Workspace API key |
 | [Portravo](https://portravo.com) | [`portravo-cli`](packages/portravo) | Plan uploads, takeoff status and reviewed estimate exports | Scoped API key |

@@ -1,7 +1,7 @@
 {
-  "checkedAt": "2026-10-25T19:47:07.634Z",
+  "checkedAt": "2026-10-29T20:14:09.617Z",
   "repository": "https://github.com/johnarndt/product-clis",
-  "releaseSourceCommit": "69c4c71f1e26953a02e6cf87c633e929ecd82424",
+  "releaseSourceCommit": "746d50e0e1ba467bb9ad5c9ff92dd27a2494c473",
   "status": "selected_packages_published_and_integrity_verified",
   "selectedProducts": [
     "postedly",
@@ -10,18 +10,26 @@
     "portravo"
   ],
   "tests": {
-    "passed": 36,
-    "failed": 0
+    "passed": 40,
+    "failed": 0,
+    "scope": "Previously completed local protocol, OAuth, credential, multipart and check-draft tests; no additional test run for this documentation record."
   },
-  "verification": "Public exact-version metadata and downloaded tarballs match the prepared SHA-512 and SHA-256 values. Each successful upload occurred once; processing delays were verified without resubmission.",
+  "verification": "Postedly 0.2.0 exact-version metadata, latest tag and installed registry package were publicly verified on October 29, including matching prepared SHA-512 integrity and a read-only live catalog check. Other package entries retain their October 25 verification and were not republished.",
   "packages": [
     {
       "name": "postedly-cli",
-      "version": "0.1.0",
-      "integrity": "sha512-fCVj6pszCA3Y+aeQ8bTI/MIUwtoM01ugKjBrTahh9jqjO6n1CHidww0lIh9Ar7fOmmEKVZ48CL3sYhOWYHiGfw==",
+      "version": "0.2.0",
+      "integrity": "sha512-ufjwBXyC2nii2AvtsncUnHGtIFCYtSdtHF+lcswVRGnLYmFE4mM63e/GB61BMQGac/lAf9Pu/2tL2UAKHJn79g==",
       "url": "https://www.npmjs.com/package/postedly-cli",
       "verified": true,
-      "published": true
+      "published": true,
+      "verifiedAt": "2026-10-29T20:14:09.617Z",
+      "sourceCommit": "746d50e0e1ba467bb9ad5c9ff92dd27a2494c473",
+      "pullRequest": "https://github.com/johnarndt/product-clis/pull/2",
+      "registryVersionVerified": true,
+      "latestTagVerified": true,
+      "installedRegistryPackageVerified": true,
+      "liveCatalogReadOnlySmoke": true
     },
     {
       "name": "mentionedon-cli",
@@ -98,5 +106,17 @@
         "published": false
       }
     ]
-  }
+  },
+  "previousPostedlyRelease": {
+    "name": "postedly-cli",
+    "version": "0.1.0",
+    "integrity": "sha512-fCVj6pszCA3Y+aeQ8bTI/MIUwtoM01ugKjBrTahh9jqjO6n1CHidww0lIh9Ar7fOmmEKVZ48CL3sYhOWYHiGfw==",
+    "url": "https://www.npmjs.com/package/postedly-cli",
+    "verified": true,
+    "published": true,
+    "verifiedAt": "2026-10-25T19:47:07.634Z"
+  },
+  "latestReleaseProducts": [
+    "postedly"
+  ]
 }
