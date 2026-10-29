@@ -1,6 +1,6 @@
 # Postedly CLI
 
-Prepare physical mail, fax and handwritten cards, get a private review link, and track delivery from your terminal. Commands return JSON for scripts and agents.
+Prepare physical mail, fax, handwritten cards and customer-owned paper checks, get a private browser review link, and track delivery from your terminal. Commands return JSON for scripts and agents.
 
 Requires Node.js 22 or later.
 
@@ -63,6 +63,44 @@ For PDF services, use the returned quote's `document.id` for `FINAL_PROOF_DOCUME
 Fax quotes require the recipient's US fax number in `recipient.fax` with `+1`, plus the sender's US billing state and ZIP. For a handwritten card, omit `documentId` and provide `options.productId`, the selected style's exact `options.fontLabel`, and `options.message`; optional `options.wishes` is the closing. The current product catalog's character limits apply.
 
 When the PDF is unavailable locally, `postedly documents prepare --service letter` returns a private upload handoff. Use `postedly documents status --id DOCUMENT_REQUEST_ID` to check it. Handoffs expire after 15 minutes.
+
+## Prepare a paper check
+
+Start with live availability. The account owner connects their own US checking account, completes passkey verification and sets signing authority at [postedly.com/checks](https://postedly.com/checks). These personal steps stay in the browser.
+
+```sh
+postedly services list
+postedly checks accounts
+postedly checks status
+```
+
+`checks accounts` returns masked account references, readiness and a `setupUrl`. Give that URL to the owner when setup is incomplete. Never request or put account/routing numbers, bank passwords, signatures or passkeys in CLI arguments, JSON files, chat or agent context.
+
+After the owner has completed setup, create private `check.json` using the exact requested payee and a ready `bankRef` from `checks accounts`:
+
+```json
+{
+  "bankRef": "READY_BANK_REF_FROM_CHECKS_ACCOUNTS",
+  "payee": {
+    "kind": "person",
+    "name": "Confirmed payee name",
+    "address1": "Confirmed US street",
+    "city": "Confirmed city",
+    "state": "CA",
+    "postalCode": "Confirmed ZIP"
+  },
+  "amountCents": 10000,
+  "memo": "Confirmed optional memo"
+}
+```
+
+```sh
+postedly checks draft --data @check.json
+```
+
+Open the returned private `reviewUrl`. The owner must inspect the full check proof, sign and approve the service-fee payment in their browser. The check face value is paid from the owner's bank when the payee deposits it; Postedly charges only its displayed service fee plus tax. Creating a draft can allocate a check number and is not idempotent: after an uncertain response, inspect the existing browser account/check state before retrying. Drafting does not sign, approve, pay for or mail a check. Provider printing/mailing status does not establish bank clearing.
+
+The ordinary `quotes create`, PDF uploads and `checkout review` commands are for the other delivery services; use the dedicated `checks draft` flow and its own returned `reviewUrl` for a check. The CLI has no bank enrollment, signing, payment or approval command. Existing account tokens use their already granted `orders:read` and `quotes:write` scopes; no banking credential scope is added.
 
 ## Track and manage orders
 

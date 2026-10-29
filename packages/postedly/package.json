@@ -1,7 +1,7 @@
 {
   "name": "postedly-cli",
-  "version": "0.1.0",
-  "description": "Prepare physical mail, fax and handwritten cards; obtain a private review link and track delivery from the terminal.",
+  "version": "0.2.0",
+  "description": "Prepare mail, fax, handwritten cards and customer-owned checks; get private browser review links and track delivery.",
   "type": "module",
   "bin": {
     "postedly": "bin/postedly.mjs"
@@ -24,6 +24,8 @@
     "postcards",
     "certified-mail",
     "handwritten-cards",
+    "checks",
+    "plaid",
     "ai-agents"
   ],
   "homepage": "https://postedly.com/developers",
