@@ -1,7 +1,11 @@
 import { readdir, mkdir, copyFile, writeFile, chmod } from 'node:fs/promises';
 import { join } from 'node:path';
 const root = new URL('../', import.meta.url);
-const products = ['postedly', 'mentionedon', 'intakra', 'portravo', 'ocolta'];
+const availableProducts = ['postedly', 'mentionedon', 'intakra', 'portravo', 'ocolta'];
+const args = process.argv.slice(2);
+if (args.length && (args.length !== 2 || args[0] !== '--products')) throw new Error('Usage: node scripts/build.mjs [--products postedly,mentionedon,intakra,portravo,ocolta]');
+const products = args.length ? args[1].split(',') : availableProducts;
+if (!products.length || new Set(products).size !== products.length || products.some(id => !availableProducts.includes(id))) throw new Error('Choose unique known product names.');
 for (const id of products) {
   const dir = new URL(`packages/${id}/`, root);
   const { default: config } = await import(new URL('product.mjs', dir));
@@ -14,7 +18,7 @@ for (const id of products) {
   await writeFile(bin, `#!/usr/bin/env node\nimport config from '../lib/product.mjs';\nimport { main } from '../lib/runtime.mjs';\nawait main(config);\n`);
   await chmod(bin, 0o755);
   const metadata = {
-    name: `${id}-cli`, version: '0.1.0', description: config.description, type: 'module',
+    name: `${id}-cli`, version: config.version || '0.1.0', description: config.description, type: 'module',
     bin: { [id]: `bin/${id}.mjs` }, engines: { node: '>=22' },
     files: ['bin/', 'lib/', 'README.md', 'LICENSE', 'examples/'],
     keywords: config.keywords, homepage: config.homepage,

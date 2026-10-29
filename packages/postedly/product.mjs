@@ -17,13 +17,25 @@ const savedDelete = {
   'expected-version': bodyNumber('expectedVersion', 'Current saved version, obtained from the list command.', true),
 };
 
+function validateCheckDraft(body) {
+  const fields = new Set(['bankRef', 'payee', 'amountCents', 'memo']);
+  const payeeFields = new Set(['kind', 'name', 'address1', 'address2', 'city', 'state', 'postalCode']);
+  if (typeof body.bankRef !== 'string' || !/^bnk_[A-Za-z0-9_-]{20,40}$/.test(body.bankRef)) throw new Error('Use only the masked bankRef returned by checks accounts; never an account or routing number.');
+  if (!Number.isSafeInteger(body.amountCents) || body.amountCents <= 0) throw new Error('amountCents must be a positive whole number of US cents.');
+  if (body.memo !== undefined && (typeof body.memo !== 'string' || body.memo.length > 40)) throw new Error('memo must be text up to 40 characters.');
+  if (Object.keys(body).some(key => !fields.has(key)) || !body.payee || typeof body.payee !== 'object' || Array.isArray(body.payee) || Object.entries(body.payee).some(([key, value]) => !payeeFields.has(key) || typeof value !== 'string')) {
+    throw new Error('Check drafts accept only bankRef, payee, amountCents and optional memo; payee accepts only kind, name and US address fields. Never supply bank credentials, account/routing numbers, signatures or approval fields to the CLI.');
+  }
+}
+
 export default {
   id: 'postedly',
+  version: '0.2.0',
   displayName: 'Postedly',
   baseUrl: 'https://postedly.com',
   homepage: 'https://postedly.com/developers',
-  description: 'Prepare physical mail, fax and handwritten cards; obtain a private review link and track delivery from the terminal.',
-  keywords: ['postedly', 'cli', 'mail', 'fax', 'postcards', 'certified-mail', 'handwritten-cards', 'ai-agents'],
+  description: 'Prepare mail, fax, handwritten cards and customer-owned checks; get private browser review links and track delivery.',
+  keywords: ['postedly', 'cli', 'mail', 'fax', 'postcards', 'certified-mail', 'handwritten-cards', 'checks', 'plaid', 'ai-agents'],
   mcpPath: '/mcp/send',
   auth: {
     env: 'POSTEDLY_TOKEN',
@@ -40,6 +52,23 @@ export default {
     {
       name: 'services list', description: 'Read current services, availability, starting prices and document requirements.',
       method: 'GET', path: '/api/catalog', auth: false,
+    },
+    {
+      name: 'checks accounts', description: 'List masked checking-account references and the owner browser setup URL. Never returns account or routing numbers.',
+      method: 'POST', path: '/mcp/send', auth: true, mcpTool: 'postedly_bank_accounts',
+    },
+    {
+      name: 'checks status', description: 'Read checking-account availability and masked setup/readiness details for the connected owner.',
+      method: 'GET', path: '/api/checks/status', auth: true,
+    },
+    {
+      name: 'checks draft', description: 'Draft one check from a ready masked bankRef. --data supplies payee, amountCents and optional memo. Returns a service-fee quote and private reviewUrl; only the owner reviews the proof, signs and pays in the browser.',
+      method: 'POST', path: '/mcp/send', auth: true, mcpTool: 'postedly_check_draft', body: true, validateBody: validateCheckDraft,
+      options: {
+        'bank-ref': bodyString('bankRef', 'Ready masked bankRef returned by checks accounts.', true),
+        'amount-cents': { type: 'integer', in: 'body', key: 'amountCents', required: true, description: 'Check face value in US cents, paid from the owner bank when deposited; separate from the service fee.' },
+        memo: bodyString('memo', 'Optional check memo, up to 40 characters.'),
+      },
     },
     {
       name: 'products list', description: 'Read handwritten card IDs, handwriting styles and current availability.',

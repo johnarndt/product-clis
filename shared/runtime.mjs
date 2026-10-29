@@ -5,7 +5,8 @@ import { randomBytes, createHash, timingSafeEqual } from 'node:crypto';
 import { createServer } from 'node:http';
 import { spawn } from 'node:child_process';
 
-const VERSION = '0.1.0';
+const DEFAULT_VERSION = '0.1.0';
+const productVersion = config => config.version || DEFAULT_VERSION;
 const globalOptions = { 'base-url': { type: 'string' }, output: { type: 'string' }, help: { type: 'boolean' }, json: { type: 'boolean' } };
 export function parseArgs(argv, definitions = {}) {
   const flags = {}, positional = [];
@@ -217,7 +218,7 @@ async function stdinText() {
   return text;
 }
 export function help(config, command) {
-  const lines = [`${config.displayName} CLI ${VERSION}`, config.description, '', `Usage: ${config.id} ${command?.name || '<command>'} [options]`, ''];
+  const lines = [`${config.displayName} CLI ${productVersion(config)}`, config.description, '', `Usage: ${config.id} ${command?.name || '<command>'} [options]`, ''];
   if (command) {
     lines.push(command.description, '');
     for (const [key, option] of Object.entries(command.options || {})) lines.push(`  --${key}${option.type === 'boolean' ? '' : ' <value>'}${option.required ? ' (required)' : ''}${option.description ? '  ' + option.description : ''}${option.enum ? ' [' + option.enum.join('|') + ']' : ''}`);
@@ -255,7 +256,7 @@ async function fileBytes(path, maxBytes, contentTypes = ['application/pdf']) {
 }
 export async function buildRequest(config, command, flags, origin, env = process.env) {
   const body = { ...(command.bodyDefaults || {}), ...await dataObject(flags.data) };
-  const headers = { Accept: command.mcpTool ? 'application/json, text/event-stream' : 'application/json', 'User-Agent': `${config.id}-cli/${VERSION}` };
+  const headers = { Accept: command.mcpTool ? 'application/json, text/event-stream' : 'application/json', 'User-Agent': `${config.id}-cli/${productVersion(config)}` };
   let path = command.path || config.mcpPath;
   const query = {};
   if (command.requiresConfirmation && flags[command.requiresConfirmation] !== true) throw new Error(`This action requires --${command.requiresConfirmation}.`);
@@ -277,6 +278,7 @@ export async function buildRequest(config, command, flags, origin, env = process
     else if (option.in === 'body') body[key] = value;
   }
   if (/{[^}]+}/.test(path)) throw new Error('Missing required path argument.');
+  if (command.validateBody) command.validateBody(body);
   const url = endpoint(origin, path);
   for (const [key, value] of Object.entries(query)) url.searchParams.set(key, String(value));
   let token;
@@ -322,7 +324,7 @@ async function writeNewFile(path, data) {
   try { await handle.writeFile(data); } finally { await handle.close(); }
 }
 export async function run(config, argv = process.argv.slice(2), env = process.env) {
-  if (argv.includes('--version')) { process.stdout.write(VERSION + '\n'); return; }
+  if (argv.includes('--version')) { process.stdout.write(productVersion(config) + '\n'); return; }
   if (!argv.length || argv[0] === '--help' || argv[0] === '-h' || argv[0] === 'help') { process.stdout.write(help(config)); return; }
   const command = config.commands.find(c => c.name.split(' ').every((part, i) => argv[i] === part));
   const builtin = argv[0] === 'login' || argv[0] === 'logout' || (argv[0] === 'auth' && argv[1] === 'status');
